@@ -1,16 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  Snackbar,
-  Alert,
-  Typography,
-} from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 import { ModalForPermissions } from "./components/ModalForPermissions";
 import type { Permissions } from "./types";
 
@@ -41,48 +30,20 @@ const MOCK_PERMISSIONS: Permissions = {
 };
 
 function App() {
-  const [open, setOpen] = useState(false);
-  const [specialization, setSpecialization] = useState("machineBuildingPlant");
   const [snackbar, setSnackbar] = useState(false);
 
   const handleSave = (updatedPermissions: Permissions) => {
     console.log("Saved permissions:", updatedPermissions);
     setSnackbar(true);
-    setOpen(false);
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8, textAlign: "center" }}>
-      <Typography variant="h4" gutterBottom>
-        UEMS Prototypes
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-        Демо модального окна редактирования прав доступа
-      </Typography>
-
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3, alignItems: "center" }}>
-        <FormControl sx={{ minWidth: 280 }}>
-          <InputLabel>Специализация</InputLabel>
-          <Select
-            value={specialization}
-            label="Специализация"
-            onChange={(e) => setSpecialization(e.target.value)}
-          >
-            <MenuItem value="machineBuildingPlant">Завод (machineBuildingPlant)</MenuItem>
-            <MenuItem value="institute">Институт (institute)</MenuItem>
-          </Select>
-        </FormControl>
-
-        <Button variant="contained" size="large" onClick={() => setOpen(true)}>
-          Открыть модалку прав доступа
-        </Button>
-      </Box>
-
+    <>
       <ModalForPermissions
         permissions={MOCK_PERMISSIONS}
-        specialization={specialization}
-        open={open}
-        onClose={() => setOpen(false)}
+        specialization="machineBuildingPlant"
+        open={true}
+        onClose={() => {}}
         onSave={handleSave}
       />
 
@@ -96,7 +57,7 @@ function App() {
           Права сохранены (см. console.log)
         </Alert>
       </Snackbar>
-    </Container>
+    </>
   );
 }
 
