@@ -1,3 +1,12 @@
+export interface SimplifiedPermissions {
+  uid: string;
+  name: string;
+  email: string;
+  roles: string[];
+  sections: Record<string, boolean>;
+  notificationAccess: Record<string, { enabled: boolean }>;
+}
+
 export interface PermissionObject {
   view: boolean;
   create: boolean;

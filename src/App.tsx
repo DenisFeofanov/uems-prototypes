@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Snackbar, Alert } from "@mui/material";
-import { ModalForPermissions } from "./components/ModalForPermissions";
-import type { Permissions } from "./types";
+import { ExplorerPermissions } from "./components/ExplorerPermissions";
+import FullScreenDialog from "./components/FullScreenDialog";
+import type { SimplifiedPermissions, Permissions } from "./types";
 
 const MOCK_PERMISSIONS: Permissions = {
   uid: "mock-user-001",
@@ -29,23 +30,56 @@ const MOCK_PERMISSIONS: Permissions = {
   },
 };
 
+function deriveSimplifiedPermissions(p: Permissions): SimplifiedPermissions {
+  const sectionKeys = [
+    "hostTrades", "tradePosition", "bidderTrades", "tradeInvitations",
+    "order", "searchCompanies", "tools", "apparatus", "lotusSTHE",
+    "calculationTools", "menuCalculationTools", "variableComplexity",
+    "toolsEllipticalBottom", "toolsShell",
+  ] as const;
+
+  const sections: Record<string, boolean> = {};
+  for (const key of sectionKeys) {
+    const obj = p[key];
+    if (obj && typeof obj === "object") {
+      sections[key] = Object.values(obj as unknown as Record<string, boolean>).some(Boolean);
+    } else {
+      sections[key] = false;
+    }
+  }
+
+  return {
+    uid: p.uid,
+    name: p.name,
+    email: p.email,
+    roles: [...p.roles],
+    sections,
+    notificationAccess: p.notificationAccess ?? {},
+  };
+}
+
+const MOCK_SIMPLIFIED = deriveSimplifiedPermissions(MOCK_PERMISSIONS);
+
 function App() {
   const [snackbar, setSnackbar] = useState(false);
 
-  const handleSave = (updatedPermissions: Permissions) => {
-    console.log("Saved permissions:", updatedPermissions);
+  const handleSave = (updated: SimplifiedPermissions) => {
+    console.log("Saved permissions:", updated);
     setSnackbar(true);
   };
 
   return (
     <>
-      <ModalForPermissions
-        permissions={MOCK_PERMISSIONS}
-        specialization="machineBuildingPlant"
-        open={true}
+      <FullScreenDialog
+        isOpen={true}
         onClose={() => {}}
-        onSave={handleSave}
-      />
+        title={`Редактирование прав доступа - ${MOCK_SIMPLIFIED.name}`}
+      >
+        <ExplorerPermissions
+          initialPermissions={MOCK_SIMPLIFIED}
+          onSave={handleSave}
+        />
+      </FullScreenDialog>
 
       <Snackbar
         open={snackbar}
